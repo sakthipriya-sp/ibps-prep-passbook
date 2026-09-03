@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IBPS Prep Passbook</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --paper: #ECE4D2;
+  --paper-line: #d9cdb1;
+  --ink: #21324a;
+  --ink-soft: #566076;
+  --brass: #a3763f;
+  --brass-deep: #7d5a2f;
+  --red-ink: #9b3a2c;
+  --sage: #5f7161;
+  --card: #f5efe1;
+  --shadow: rgba(33,50,74,0.14);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background: var(--paper);
+  background-image:
+    repeating-linear-gradient(transparent, transparent 27px, var(--paper-line) 28px);
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  padding: 0;
+}
+
+.cover{
+  padding: 32px 28px 20px;
+  border-bottom: 3px double var(--brass-deep);
+  background: linear-gradient(180deg, rgba(163,118,63,0.08), transparent);
+}
+.cover h1{
+  font-family:'Source Serif 4', serif;
+  font-weight:700;
+  font-size: 30px;
+  margin: 0 0 4px;
+  letter-spacing: 0.2px;
+}
+.cover .sub{
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  max-width: 60ch;
+  line-height:1.5;
+}
+
+.balance-row{
+  display:flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.balance-card{
+  background: var(--card);
+  border: 1px solid var(--paper-line);
+  border-radius: 3px;
+  padding: 10px 16px;
+  min-width: 120px;
+  box-shadow: 0 1px 0 var(--shadow);
+}
+.balance-card .num{
+  font-family:'Source Serif 4', serif;
+  font-weight:700;
+  font-size: 22px;
+  color: var(--brass-deep);
+}
+.balance-card .lbl{
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top:2px;
+}
+
+.progress-track{
+  margin-top: 16px;
+  height: 8px;
+  background: var(--card);
+  border: 1px solid var(--paper-line);
+  border-radius: 4px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background: linear-gradient(90deg, var(--brass), var(--brass-deep));
+  width:0%;
+  transition: width 0.4s ease;
+}
+
+.tabs{
+  display:flex;
+  overflow-x:auto;
+  gap: 2px;
+  padding: 14px 28px 0;
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 1px solid var(--paper-line);
+}
+.tab{
+  flex: 0 0 auto;
+  font-family:'Source Serif 4', serif;
+  font-size: 13px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+.tab.active{
+  color: var(--ink);
+  border-bottom-color: var(--brass);
+  font-weight: 600;
+}
+.tab .dot{
+  display:inline-block;
+  width:6px;height:6px;
+  border-radius:50%;
+  background: var(--sage);
+  margin-left:6px;
+  vertical-align:middle;
+  opacity:0;
+}
+.tab.done .dot{opacity:1;}
+
+.page{
+  padding: 22px 28px 60px;
+  max-width: 780px;
+  margin: 0 auto;
+}
+.week-goal{
+  font-family:'Source Serif 4', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  border-left: 3px solid var(--brass);
+  padding-left: 12px;
+}
+
+.entry{
+  display:flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--paper-line);
+  align-items:flex-start;
+}
+.entry:last-child{border-bottom:none;}
+
+.stamp{
+  flex: 0 0 26px;
+  height: 26px;
+  border: 1.5px solid var(--brass-deep);
+  border-radius: 50%;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: transparent;
+  font-size: 15px;
+  font-weight:700;
+  margin-top: 2px;
+  transition: background 0.15s, color 0.15s;
+  background: var(--card);
+  user-select:none;
+}
+.stamp.checked{
+  background: var(--brass-deep);
+  color: var(--card);
+}
+
+.entry-body{flex:1; min-width:0;}
+.entry-top{
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.day-label{
+  font-family:'Source Serif 4', serif;
+  font-weight:600;
+  font-size: 15px;
+}
+.day-date{
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.day-hours{
+  font-size: 11px;
+  color: var(--brass-deep);
+  font-weight:600;
+  white-space:nowrap;
+}
+.day-subject{
+  font-size: 13px;
+  font-weight:600;
+  color: var(--ink);
+  margin-top: 3px;
+}
+.topics{
+  margin: 4px 0 0;
+  padding-left: 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.topics li{margin: 1px 0;}
+.entry.checked .day-subject,
+.entry.checked .topics{
+  color: #9aa2ac;
+  text-decoration: line-through;
+  text-decoration-color: #c3b89e;
+}
+
+.weekend-block .day-subject{color: var(--red-ink);}
+
+.note-card{
+  margin-top: 18px;
+  background: var(--card);
+  border: 1px dashed var(--brass);
+  border-radius: 4px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height:1.6;
+}
+.note-card b{color:var(--ink);}
+
+.dec-header{
+  font-family:'Source Serif 4', serif;
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.dec-sub{
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+}
+
+@media (max-width: 560px){
+  .cover{padding:24px 18px 16px;}
+  .tabs{padding: 10px 18px 0;}
+  .page{padding: 18px 18px 50px;}
+}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>IBPS Preparation Passbook</h1>
+  <p class="sub">Weekdays 1 hr · Saturdays 6 hrs · Sundays 4 hrs. Twelve weeks from 7 September to 29 November, then a repeating December structure through the exam phase. Tap the circle beside each entry to mark it done — your progress is saved.</p>
+  <div class="balance-row">
+    <div class="balance-card"><div class="num" id="statDone">0</div><div class="lbl">entries done</div></div>
+    <div class="balance-card"><div class="num" id="statTotal">0</div><div class="lbl">total entries</div></div>
+    <div class="balance-card"><div class="num" id="statHours">0</div><div class="lbl">hours logged</div></div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="page" id="page"></div>
+
+<script>
+const DATA = [
+{ id:'w1', label:'Week 1', goal:'Start aptitude + understand computer/banking basics', dates:['Sep 7','Sep 13'],
+  days:[
+    {date:'Mon 7 Sep', subject:'Quant', hours:'1 hr', topics:['Simplification basics: BODMAS','Fractions','Percentages in calculations','20 practice questions']},
+    {date:'Tue 8 Sep', subject:'Reasoning', hours:'1 hr', topics:['Inequalities: basic symbols','Direct inequalities','Coded inequalities','20 questions']},
+    {date:'Wed 9 Sep', subject:'IT — Computer Fundamentals', hours:'1 hr', topics:['Input → Process → Output','CPU, ALU, CU','Registers']},
+    {date:'Thu 10 Sep', subject:'Quant — Approximation', hours:'1 hr', topics:['Rounding numbers','Quick multiplication/division','20–25 questions']},
+    {date:'Fri 11 Sep', subject:'Banking + English', hours:'1 hr', topics:['Banking: what is a bank, types of banks, RRB basics','English: Parts of Speech basics']},
+    {date:'Sat 12 Sep', subject:'Heavy practice day', hours:'6 hrs', topics:['Simplification practice — 1.5 hr','Inequality practice — 1 hr','Computer memory: RAM/ROM/Cache — 1.5 hr','Banking system basics — 1 hr','Weekly revision — 1 hr']},
+    {date:'Sun 13 Sep', subject:'Test + review', hours:'4 hrs', topics:['Quant mini-test — 1 hr','Reasoning mini-test — 1 hr','IT MCQs — 1 hr','Review mistakes — 1 hr']},
+  ]},
+{ id:'w2', label:'Week 2', goal:'Number skills + basic reasoning', dates:['Sep 14','Sep 20'],
+  days:[
+    {date:'Mon 14 Sep', subject:'Quant — Number Series', hours:'1 hr', topics:[]},
+    {date:'Tue 15 Sep', subject:'Reasoning — Syllogism', hours:'1 hr', topics:[]},
+    {date:'Wed 16 Sep', subject:'IT — Computer Memory + Storage', hours:'1 hr', topics:['Primary vs Secondary','HDD vs SSD','Cache','Registers']},
+    {date:'Thu 17 Sep', subject:'Quant — Percentage, Part 1', hours:'1 hr', topics:[]},
+    {date:'Fri 18 Sep', subject:'Banking + English', hours:'1 hr', topics:['Banking: RBI basics','English: Subject-Verb Agreement']},
+    {date:'Sat 19 Sep', subject:'Heavy practice day', hours:'6 hrs', topics:['Number Series — 1.5 hr','Syllogism — 1.5 hr','Percentage — 1 hr','Computer generations/hardware/software — 1 hr','RBI revision — 1 hr']},
+    {date:'Sun 20 Sep', subject:'Test + review', hours:'4 hrs', topics:['Quant test','Reasoning test','IT MCQs','Revision']},
+  ]},
+{ id:'w3', label:'Week 3', goal:'Arithmetic begins + DBMS', dates:['Sep 21','Sep 27'],
+  days:[
+    {date:'Mon 21 Sep', subject:'Quant — Percentage, Part 2', hours:'1 hr', topics:[]},
+    {date:'Tue 22 Sep', subject:'Reasoning — Coding-Decoding', hours:'1 hr', topics:[]},
+    {date:'Wed 23 Sep', subject:'IT — DBMS Basics', hours:'1 hr', topics:['Database','DBMS vs RDBMS','Tables, Records, Attributes']},
+    {date:'Thu 24 Sep', subject:'Quant — Ratio & Proportion', hours:'1 hr', topics:[]},
+    {date:'Fri 25 Sep', subject:'Banking + English', hours:'1 hr', topics:['Banking: RBI functions + NABARD','English: Tenses']},
+    {date:'Sat 26 Sep', subject:'Heavy practice day', hours:'6 hrs', topics:['Percentage — 1 hr','Ratio — 1 hr','Coding-Decoding — 1.5 hr','DBMS concepts — 1.5 hr','Banking revision — 1 hr']},
+    {date:'Sun 27 Sep', subject:'Test + review', hours:'4 hrs', topics:['Arithmetic test','Reasoning test','DBMS MCQs','Error review']},
+  ]},
+{ id:'w4', label:'Week 4', goal:'Averages, keys, banking rates', dates:['Sep 28','Oct 4'],
+  days:[
+    {date:'Mon 28 Sep', subject:'Quant — Average', hours:'1 hr', topics:[]},
+    {date:'Tue 29 Sep', subject:'Reasoning — Blood Relations', hours:'1 hr', topics:[]},
+    {date:'Wed 30 Sep', subject:'IT — DBMS Keys', hours:'1 hr', topics:['Primary Key','Foreign Key','Candidate Key','Super Key']},
+    {date:'Thu 1 Oct', subject:'Quant — Profit & Loss', hours:'1 hr', topics:[]},
+    {date:'Fri 2 Oct', subject:'Banking + English', hours:'1 hr', topics:['Banking: CRR, SLR, Repo Rate','English: Articles']},
+    {date:'Sat 3 Oct', subject:'Heavy practice day', hours:'6 hrs', topics:['Average','Profit & Loss','Blood Relations','DBMS Keys','Banking revision']},
+    {date:'Sun 4 Oct', subject:'Tests + revision', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w5', label:'Week 5', goal:'Interest, normalization, monetary policy', dates:['Oct 5','Oct 11'],
+  days:[
+    {date:'Mon 5 Oct', subject:'Quant — Discount + P&L revision', hours:'1 hr', topics:[]},
+    {date:'Tue 6 Oct', subject:'Reasoning — Direction & Distance', hours:'1 hr', topics:[]},
+    {date:'Wed 7 Oct', subject:'IT — Normalization', hours:'1 hr', topics:['1NF','2NF','3NF']},
+    {date:'Thu 8 Oct', subject:'Quant — Simple Interest', hours:'1 hr', topics:[]},
+    {date:'Fri 9 Oct', subject:'Banking + English', hours:'1 hr', topics:['Banking: Reverse Repo + Monetary Policy','English: Prepositions']},
+    {date:'Sat 10 Oct', subject:'Heavy practice day', hours:'6 hrs', topics:['P&L + Discount','Direction','Simple Interest','Normalization','DBMS MCQs']},
+    {date:'Sun 11 Oct', subject:'Topic tests + mistakes', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w6', label:'Week 6', goal:'Compound interest, SQL, digital payments', dates:['Oct 12','Oct 18'],
+  days:[
+    {date:'Mon 12 Oct', subject:'Quant — Compound Interest', hours:'1 hr', topics:[]},
+    {date:'Tue 13 Oct', subject:'Reasoning — Ranking & Order', hours:'1 hr', topics:[]},
+    {date:'Wed 14 Oct', subject:'IT — SQL Basics', hours:'1 hr', topics:['SELECT','WHERE','ORDER BY','GROUP BY']},
+    {date:'Thu 15 Oct', subject:'Quant — Time & Work', hours:'1 hr', topics:[]},
+    {date:'Fri 16 Oct', subject:'Banking + English', hours:'1 hr', topics:['Banking: NEFT, RTGS, IMPS, UPI','English: Error Detection']},
+    {date:'Sat 17 Oct', subject:'Heavy practice day', hours:'6 hrs', topics:['Compound Interest','Time & Work','Ranking','SQL queries','Digital payments']},
+    {date:'Sun 18 Oct', subject:'Sectional practice', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w7', label:'Week 7', goal:'Seating arrangement begins + OS Part 1', dates:['Oct 19','Oct 25'],
+  days:[
+    {date:'Mon 19 Oct', subject:'Quant — Pipes & Cisterns', hours:'1 hr', topics:[]},
+    {date:'Tue 20 Oct', subject:'Reasoning — Linear Seating Arrangement (basics)', hours:'1 hr', topics:[]},
+    {date:'Wed 21 Oct', subject:'IT — Operating Systems, Part 1', hours:'1 hr', topics:['What is an OS?','Types of OS','Process','Thread']},
+    {date:'Thu 22 Oct', subject:'Quant — Time, Speed & Distance', hours:'1 hr', topics:[]},
+    {date:'Fri 23 Oct', subject:'Banking + English', hours:'1 hr', topics:['Banking: Accounts — Savings, Current, FD','English: Fillers']},
+    {date:'Sat 24 Oct', subject:'Heavy practice day', hours:'6 hrs', topics:['Pipes','Time, Speed & Distance','Seating Arrangement','OS concepts','Banking']},
+    {date:'Sun 25 Oct', subject:'Practice + revision', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w8', label:'Week 8', goal:'Trains, circular seating, OS scheduling', dates:['Oct 26','Nov 1'],
+  days:[
+    {date:'Mon 26 Oct', subject:'Quant — Trains', hours:'1 hr', topics:[]},
+    {date:'Tue 27 Oct', subject:'Reasoning — Circular Seating Arrangement', hours:'1 hr', topics:[]},
+    {date:'Wed 28 Oct', subject:'IT — Operating Systems, Part 2', hours:'1 hr', topics:['CPU Scheduling','FCFS','SJF','Round Robin']},
+    {date:'Thu 29 Oct', subject:'Quant — Boats & Streams', hours:'1 hr', topics:[]},
+    {date:'Fri 30 Oct', subject:'Banking + English', hours:'1 hr', topics:['Banking: Cheque, DD, Debit/Credit Cards','English: Reading Comprehension']},
+    {date:'Sat 31 Oct', subject:'Heavy practice day', hours:'6 hrs', topics:['Trains','Boats','Circular Seating','OS Scheduling','Banking revision']},
+    {date:'Sun 1 Nov', subject:'Timed tests', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w9', label:'Week 9', goal:'Mixtures, floor puzzles, OS memory management', dates:['Nov 2','Nov 8'],
+  days:[
+    {date:'Mon 2 Nov', subject:'Quant — Mixture & Allegation', hours:'1 hr', topics:[]},
+    {date:'Tue 3 Nov', subject:'Reasoning — Floor-Based Puzzles', hours:'1 hr', topics:[]},
+    {date:'Wed 4 Nov', subject:'IT — Operating Systems, Part 3', hours:'1 hr', topics:['Deadlock','Paging','Segmentation','Virtual Memory']},
+    {date:'Thu 5 Nov', subject:'Quant — Partnership + Ages', hours:'1 hr', topics:[]},
+    {date:'Fri 6 Nov', subject:'Banking + English', hours:'1 hr', topics:['Banking: Inflation','English: Cloze Test']},
+    {date:'Sat 7 Nov', subject:'Heavy practice day', hours:'6 hrs', topics:['Arithmetic','Floor puzzles','OS memory management','Banking']},
+    {date:'Sun 8 Nov', subject:'Tests + weak areas', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w10', label:'Week 10', goal:'Data Interpretation + Networking begins', dates:['Nov 9','Nov 15'],
+  days:[
+    {date:'Mon 9 Nov', subject:'Quant — DI: Tables', hours:'1 hr', topics:[]},
+    {date:'Tue 10 Nov', subject:'Reasoning — Advanced Puzzles', hours:'1 hr', topics:[]},
+    {date:'Wed 11 Nov', subject:'IT — Networking, Part 1', hours:'1 hr', topics:['Network basics','LAN/MAN/WAN','OSI Model']},
+    {date:'Thu 12 Nov', subject:'Quant — DI: Bar Graph + Pie Chart', hours:'1 hr', topics:[]},
+    {date:'Fri 13 Nov', subject:'Banking + English', hours:'1 hr', topics:['Banking: Digital Banking','English: Para Jumbles']},
+    {date:'Sat 14 Nov', subject:'Heavy practice day', hours:'6 hrs', topics:['DI practice','Puzzles','OSI Model','Banking']},
+    {date:'Sun 15 Nov', subject:'Timed sectional tests', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w11', label:'Week 11', goal:'DI continues + TCP/IP networking', dates:['Nov 16','Nov 22'],
+  days:[
+    {date:'Mon 16 Nov', subject:'Quant — DI: Line Graph', hours:'1 hr', topics:[]},
+    {date:'Tue 17 Nov', subject:'Reasoning — Input-Output', hours:'1 hr', topics:[]},
+    {date:'Wed 18 Nov', subject:'IT — Networking, Part 2', hours:'1 hr', topics:['TCP/IP','TCP vs UDP','IP Address','DNS','DHCP']},
+    {date:'Thu 19 Nov', subject:'Quant — DI: Caselet', hours:'1 hr', topics:[]},
+    {date:'Fri 20 Nov', subject:'Banking + English', hours:'1 hr', topics:['Banking: AEPS, NPCI, RuPay','English: Vocabulary']},
+    {date:'Sat 21 Nov', subject:'Heavy practice day', hours:'6 hrs', topics:['DI','Input-Output','Networking','Banking']},
+    {date:'Sun 22 Nov', subject:'Mock + analysis', hours:'4 hrs', topics:[]},
+  ]},
+{ id:'w12', label:'Week 12', goal:'Full revision + first combined mock', dates:['Nov 23','Nov 29'],
+  days:[
+    {date:'Mon 23 Nov', subject:'Quant — Full Revision', hours:'1 hr', topics:[]},
+    {date:'Tue 24 Nov', subject:'Reasoning — Full Revision', hours:'1 hr', topics:[]},
+    {date:'Wed 25 Nov', subject:'IT — Java + OOP', hours:'1 hr', topics:['Encapsulation','Inheritance','Polymorphism','Abstraction']},
+    {date:'Thu 26 Nov', subject:'Quant — Mixed Practice', hours:'1 hr', topics:[]},
+    {date:'Fri 27 Nov', subject:'Banking — Full Revision', hours:'1 hr', topics:[]},
+    {date:'Sat 28 Nov', subject:'Heavy practice day', hours:'6 hrs', topics:['Quant mock','Reasoning mock','OOP + Java','Banking revision','Error notebook']},
+    {date:'Sun 29 Nov', subject:'🔥 First full combined mock', hours:'4 hrs', topics:['Take one complete mock across all sections, then log every mistake in your error notebook.']},
+  ]},
+];
+
+const IT_REMAINING = [
+  'Data Structures — Array, Linked List, Stack, Queue, Tree, Graph, Searching, Sorting',
+  'Software Engineering — SDLC, Waterfall, Agile, Testing',
+  'Cyber Security — Virus, Worm, Trojan, Phishing, Firewall, Encryption',
+  'Computer Architecture — Number systems, CPU, Memory hierarchy, Basic architecture'
+];
+
+const DEC_TEMPLATE = [
+  {day:'Monday', hours:'1 hr', subject:'Quant / Numerical Ability test', topics:[]},
+  {day:'Tuesday', hours:'1 hr', subject:'Reasoning test', topics:[]},
+  {day:'Wednesday', hours:'1 hr', subject:'Remaining IT topics + MCQs', topics:[]},
+  {day:'Thursday', hours:'1 hr', subject:'Weakest Quant/Reasoning topic', topics:[]},
+  {day:'Friday', hours:'1 hr', subject:'Banking + English', topics:[]},
+  {day:'Saturday', hours:'6 hrs', subject:'Full heavy preparation', topics:['Mock','Analysis','IT revision','Banking revision']},
+  {day:'Sunday', hours:'4 hrs', subject:'Weak-area repair + sectional tests', topics:[]},
+];
+
+let progress = new Set();
+let activeTab = 'w1';
+
+function entryKey(weekId, dayDate){ return weekId + '::' + dayDate; }
+
+function loadProgress(){
+  try{
+    const saved = localStorage.getItem('study-progress');
+    if(saved){
+      progress = new Set(JSON.parse(saved));
+    }
+  }catch(e){ /* no saved progress yet, or storage unavailable */ }
+  render();
+}
+
+function saveProgress(){
+  try{
+    localStorage.setItem('study-progress', JSON.stringify(Array.from(progress)));
+  }catch(e){ console.error('save failed', e); }
+}
+
+function toggleEntry(key){
+  if(progress.has(key)) progress.delete(key); else progress.add(key);
+  saveProgress();
+  render();
+}
+
+function hoursToNum(h){
+  const m = h.match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : 0;
+}
+
+function computeStats(){
+  let done=0, total=0, hours=0;
+  DATA.forEach(w=>{
+    w.days.forEach(d=>{
+      total++;
+      const key = entryKey(w.id, d.date);
+      if(progress.has(key)){ done++; hours += hoursToNum(d.hours); }
+    });
+  });
+  return {done, total, hours};
+}
+
+function renderTabs(){
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  DATA.forEach(w=>{
+    const allDone = w.days.every(d=>progress.has(entryKey(w.id, d.date)));
+    const el = document.createElement('div');
+    el.className = 'tab' + (w.id===activeTab ? ' active':'') + (allDone ? ' done':'');
+    el.innerHTML = w.label + '<span class="dot"></span>';
+    el.onclick = ()=>{ activeTab = w.id; render(); };
+    tabs.appendChild(el);
+  });
+  const decEl = document.createElement('div');
+  decEl.className = 'tab' + (activeTab==='dec' ? ' active':'');
+  decEl.textContent = 'December →';
+  decEl.onclick = ()=>{ activeTab='dec'; render(); };
+  tabs.appendChild(decEl);
+}
+
+function renderPage(){
+  const page = document.getElementById('page');
+  page.innerHTML = '';
+
+  if(activeTab === 'dec'){
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `
+      <div class="dec-header">December structure</div>
+      <p class="dec-sub">Once the foundation above is done, repeat this weekly rhythm through the exam phase — folding in the IT topics that are still outstanding.</p>
+    `;
+    DEC_TEMPLATE.forEach((d,i)=>{
+      const key = 'dec::' + d.day;
+      const checked = progress.has(key);
+      const entry = document.createElement('div');
+      entry.className = 'entry' + (checked ? ' checked':'');
+      entry.innerHTML = `
+        <div class="stamp ${checked?'checked':''}">${checked?'✓':''}</div>
+        <div class="entry-body">
+          <div class="entry-top">
+            <span class="day-label">${d.day}</span>
+            <span class="day-hours">${d.hours}</span>
+          </div>
+          <div class="day-subject">${d.subject}</div>
+          ${d.topics.length ? '<ul class="topics">' + d.topics.map(t=>'<li>'+t+'</li>').join('') + '</ul>' : ''}
+        </div>`;
+      entry.querySelector('.stamp').onclick = ()=>toggleEntry(key);
+      wrap.appendChild(entry);
+    });
+    const note = document.createElement('div');
+    note.className = 'note-card';
+    note.innerHTML = '<b>IT topics still outstanding:</b><br>' + IT_REMAINING.join('<br>');
+    wrap.appendChild(note);
+
+    const note2 = document.createElement('div');
+    note2.className = 'note-card';
+    note2.innerHTML = '<b>Before you lock any of this in:</b> check exact section weightage and dates against the official 2026 IBPS notification / admit card — this passbook covers the major combined areas but is not a substitute for the official syllabus.';
+    wrap.appendChild(note2);
+
+    page.appendChild(wrap);
+    return;
+  }
+
+  const week = DATA.find(w=>w.id===activeTab);
+  if(!week) return;
+  const goal = document.createElement('p');
+  goal.className = 'week-goal';
+  goal.textContent = week.goal;
+  page.appendChild(goal);
+
+  week.days.forEach(d=>{
+    const key = entryKey(week.id, d.date);
+    const checked = progress.has(key);
+    const isWeekend = d.date.startsWith('Sat') || d.date.startsWith('Sun');
+    const entry = document.createElement('div');
+    entry.className = 'entry' + (checked?' checked':'') + (isWeekend?' weekend-block':'');
+    entry.innerHTML = `
+      <div class="stamp ${checked?'checked':''}">${checked?'✓':''}</div>
+      <div class="entry-body">
+        <div class="entry-top">
+          <span class="day-label">${d.date}</span>
+          <span class="day-hours">${d.hours}</span>
+        </div>
+        <div class="day-subject">${d.subject}</div>
+        ${d.topics.length ? '<ul class="topics">' + d.topics.map(t=>'<li>'+t+'</li>').join('') + '</ul>' : ''}
+      </div>`;
+    entry.querySelector('.stamp').onclick = ()=>toggleEntry(key);
+    page.appendChild(entry);
+  });
+
+  if(week.id==='w12'){
+    const note = document.createElement('div');
+    note.className = 'note-card';
+    note.innerHTML = '<b>Heads up:</b> the IT syllabus is not finished here. Open the December tab for the topics still outstanding.';
+    page.appendChild(note);
+  }
+}
+
+function renderStats(){
+  const {done, total, hours} = computeStats();
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statHours').textContent = hours;
+  document.getElementById('progressFill').style.width = total ? (done/total*100)+'%' : '0%';
+}
+
+function render(){
+  renderTabs();
+  renderPage();
+  renderStats();
+}
+
+loadProgress();
+</script>
+</body>
+</html>
